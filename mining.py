@@ -34,12 +34,19 @@ exp = bits[0]
 coef = int.from_bytes(bits[1:], 'big')
 target = coef * 256 ** (exp-3)
 
-print("           target je: {}".format(hex(target)[2:].zfill(64)))
+print("--- Hlavička ", "-"*75)
+print("verze: ".ljust(13), ver.hex())
+print("prev blk: ".ljust(13), prev_block.hex())
+print("merkle root: ", merkle_root.hex())
+print("timestamp: ".ljust(13), ts.hex())
+print("bits: ".ljust(13), bits.hex())
+print("-"*88)
+print("{}target je: {}".format("".ljust(11), hex(target)[2:].zfill(64)))
 
 nonce = 0x29a13700 # startovní nonce; hardcore si sem dají nulu.
 
 # těžíme!
-while nonce < 0xffffffff:
+while nonce <= 0xffffffff:
     tx = ver[::-1] + prev_block[::-1] + merkle_root[::-1] + ts[::-1] + bits[::-1] + nonce.to_bytes(4, 'big')
     hash = sha256( sha256(tx).digest() ).digest()
     res = int.from_bytes(hash, "little") < target
@@ -49,5 +56,5 @@ while nonce < 0xffffffff:
     else:
         nonce += 1
 
-print("          target byl: {}".format(hex(target)[2:].zfill(64)))
+print("{}target byl: {}".format("".ljust(10) ,hex(target)[2:].zfill(64)))
 
