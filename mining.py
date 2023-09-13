@@ -43,11 +43,11 @@ print("bits: ".ljust(13), bits.hex())
 print("-"*88)
 print("{}target je: {}".format("".ljust(11), hex(target)[2:].zfill(64)))
 
-nonce = 0x29a13700 # startovní nonce; hardcore si sem dají nulu.
+nonce = 0x1437a115 # startovní nonce; hardcore si sem dají nulu.
 
 # těžíme!
 while nonce <= 0xffffffff:
-    tx = ver[::-1] + prev_block[::-1] + merkle_root[::-1] + ts[::-1] + bits[::-1] + nonce.to_bytes(4, 'big')
+    tx = ver[::-1] + prev_block[::-1] + merkle_root[::-1] + ts[::-1] + bits[::-1] + nonce.to_bytes(4, 'little')
     hash = sha256( sha256(tx).digest() ).digest()
     res = int.from_bytes(hash, "little") < target
     print("pro nonci {}: {} ; {}".format(hex(nonce), (hash[::-1]).hex(), "OK!" if res else "nic"))
@@ -57,4 +57,3 @@ while nonce <= 0xffffffff:
         nonce += 1
 
 print("{}target byl: {}".format("".ljust(10) ,hex(target)[2:].zfill(64)))
-
